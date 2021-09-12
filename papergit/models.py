@@ -2,6 +2,7 @@
 """
 import os
 import time
+import re
 import dropbox.exceptions
 
 from dropbox.paper import ExportFormat
@@ -194,10 +195,26 @@ class Sync(BasePaperModel):
 
     def sync_single(self, doc, commit=True, push=False):
         original_path, final_path = self.get_doc_sync_path(doc)
+
         with open(final_path, 'w+') as fp:
-            print(generate_metadata(doc=doc), file=fp)
             with open(original_path, 'r') as op:
+                heading = op.readline().strip()
+                first_line = op.readline().strip()
+
+                tags = re.findall(r"#(\w+)", first_line)
+                draft = 'false'
+                actual_tags = []
+                for tag in tags:
+                    if tag == "draft":
+                        draft = 'true'
+                    else:
+                        actual_tags.append(tag)
+
+                print(generate_metadata(doc, None, actual_tags, draft), file=fp)
+                if len(tags) == 0:
+                    print(first_line, file=fp)
                 print(op.read(), file=fp)
+
         if commit:
             self.commit_changes(push=push)
 
