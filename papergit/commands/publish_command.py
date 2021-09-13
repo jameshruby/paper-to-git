@@ -1,6 +1,7 @@
 """
 Publish a document.
 """
+from pprint import pprint
 
 from papergit.commands.base import BaseCommand
 from papergit.models import PaperDoc

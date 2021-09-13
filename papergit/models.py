@@ -65,7 +65,9 @@ class PaperDoc(BasePaperModel):
         """Update this record with the latest version of the document. Also,
         download the latest version to the file.
         """
-        title, rev = PaperDoc.download_doc(self.paper_id)
+        title, rev, is_draft = PaperDoc.download_doc_unless_draft(self.paper_id)
+        if is_draft:
+            return
         if rev > self.version:
             print('Update revision for doc {0} from {1} to {2}'.format(
                 self.title, self.version, rev))
@@ -97,9 +99,13 @@ class PaperDoc(BasePaperModel):
             try:
                 doc = PaperDoc.get(PaperDoc.paper_id == doc_id)
                 if not os.path.exists(self.generate_file_path(doc_id)):
-                    self.download_doc(doc_id)
+                    title, rev, is_draft = self.download_doc_unless_draft(doc_id)
+                    if is_draft:
+                        continue
             except PaperDoc.DoesNotExist:
-                title, rev = self.download_doc(doc_id)
+                title, rev, is_draft = self.download_doc_unless_draft(doc_id)
+                if is_draft:
+                    continue
                 doc = PaperDoc.create(paper_id=doc_id, title=title, version=rev,
                                       last_updated=time.time())
                 doc.update_folder_info()
@@ -114,6 +120,21 @@ class PaperDoc(BasePaperModel):
         result = dbx.paper_docs_download_to_file(
             path, doc_id, ExportFormat.markdown)
         return (result.title, result.revision)
+
+    @classmethod
+    @dropbox_api
+    def download_doc_unless_draft(self, dbx, doc_id, draft_tag="#draft"):
+        """Downloads the given doc_id to the local file cache.
+           Delete if draft and return whether file is draft
+           We meed this, as theres no way to check metadata before downloading doc
+        """
+        title, rev = self.download_doc(doc_id)
+        is_draft = False
+        if draft_tag and draft_tag in title.lower():
+            is_draft = True
+            path = self.generate_file_path(doc_id)
+            os.remove(path)
+        return title, rev, is_draft
 
     @classmethod
     @dropbox_api
@@ -154,7 +175,7 @@ class PaperDoc(BasePaperModel):
         if self.folder:
             try:
                 sync = Sync.get(folder=self.folder)
-                sync.sync_single(doc=self, commit=True, push=push)
+                sync.try_sync_single(doc=self, commit=False, push=push)
                 self.last_published = time.time()
                 self.save()
             except Sync.DoesNotExist:
@@ -210,7 +231,6 @@ class Sync(BasePaperModel):
 
     def sync_single(self, doc, commit=True, push=False):
         original_path, final_path = self.get_doc_sync_path(doc)
-
         with open(final_path, 'w+') as fp:
             with open(original_path, 'r') as op:
                 heading = op.readline().strip()
@@ -232,6 +252,11 @@ class Sync(BasePaperModel):
 
         if commit:
             self.commit_changes(push=push)
+
+    def try_sync_single(self, doc, commit=True, push=False):
+        from os.path import exists
+        if exists(PaperDoc.generate_file_path(doc.paper_id)):
+            self.sync_single(doc, commit, push)
 
     def get_doc_sync_path(self, doc):
         original_path = PaperDoc.generate_file_path(doc.paper_id)
