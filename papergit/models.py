@@ -68,7 +68,7 @@ class PaperDoc(BasePaperModel):
         title, rev = PaperDoc.download_doc(self.paper_id)
         if rev > self.version:
             print('Update revision for doc {0} from {1} to {2}'.format(
-                  self.title, self.version, rev))
+                self.title, self.version, rev))
             self.version = rev
             self.last_updated = time.time()
         if self.title != title:
@@ -92,6 +92,8 @@ class PaperDoc(BasePaperModel):
         """
         docs = dbx.paper_docs_list()
         for doc_id in docs.doc_ids:
+            if not self.is_included_in_sync(doc_id):
+                continue
             try:
                 doc = PaperDoc.get(PaperDoc.paper_id == doc_id)
                 if not os.path.exists(self.generate_file_path(doc_id)):
@@ -112,6 +114,19 @@ class PaperDoc(BasePaperModel):
         result = dbx.paper_docs_download_to_file(
             path, doc_id, ExportFormat.markdown)
         return (result.title, result.revision)
+
+    @classmethod
+    @dropbox_api
+    def is_included_in_sync(cls, dbx, doc_id):
+        folder_info = dbx.paper_docs_get_folder_info(doc_id)
+        folders_synced = PaperFolder.select()
+        if not folders_synced:  # No folders are synced, take everything
+            return True
+        if folder_info and folder_info.folders:
+            for folder in folders_synced:
+                if folder.name.lower() == folder_info.folders[0].name.lower():
+                    return True
+        return False
 
     @dropbox_api
     def update_folder_info(self, dbx):
