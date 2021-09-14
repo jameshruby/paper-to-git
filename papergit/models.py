@@ -272,7 +272,8 @@ class Sync(BasePaperModel):
 
     def get_doc_sync_path(self, doc):
         original_path = PaperDoc.generate_file_path(doc.paper_id)
-        final_path = self.get_final_path(doc.title)
+        file_name = create_file_name(doc.title)
+        final_path = os.path.join(self.repo, self.path_in_repo, file_name)
         return (original_path, final_path)
 
     def get_final_path(self, title):
