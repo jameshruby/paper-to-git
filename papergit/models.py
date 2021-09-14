@@ -65,7 +65,7 @@ class PaperDoc(BasePaperModel):
         """Update this record with the latest version of the document. Also,
         download the latest version to the file.
         """
-        title, rev, is_draft = PaperDoc.download_doc_unless_draft(self.paper_id)
+        title, rev, is_draft = PaperDoc.download_doc_unless_draft(self.paper_id, "")
         if not is_draft and rev > self.version:
             print('Update revision for doc {0} from {1} to {2}'.format(
                 self.title, self.version, rev))
@@ -97,11 +97,11 @@ class PaperDoc(BasePaperModel):
             try:
                 doc = PaperDoc.get(PaperDoc.paper_id == doc_id)
                 if not os.path.exists(self.generate_file_path(doc_id)):
-                    title, rev, is_draft = self.download_doc_unless_draft(doc_id)
+                    title, rev, is_draft = self.download_doc_unless_draft(doc_id, "")
                     if is_draft:
                         continue
             except PaperDoc.DoesNotExist:
-                title, rev, is_draft = self.download_doc_unless_draft(doc_id)
+                title, rev, is_draft = self.download_doc_unless_draft(doc_id, "")
                 if is_draft:
                     continue
                 doc = PaperDoc.create(paper_id=doc_id, title=title, version=rev,
@@ -170,6 +170,10 @@ class PaperDoc(BasePaperModel):
           (Later it will fail and allow to view a diff of the changes that will
            be made to the destination file.)
         """
+        print(self.title)
+        is_draft = "#draft"
+        if is_draft in self.title.lower():
+            return True
         if self.folder:
             try:
                 sync = Sync.get(folder=self.folder)
