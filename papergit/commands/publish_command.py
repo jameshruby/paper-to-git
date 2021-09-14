@@ -39,7 +39,7 @@ class PublishCommand(BaseCommand):
                 og_title = doc.title
                 renamed = doc.get_changes()
                 if renamed:
-                    renamed_docs.append(og_title)
+                    renamed_docs.append(PaperDoc.get_doc_sync_path(og_title))
 
             print("Pulling the list of paper docs...")
             PaperDoc.sync_docs()
@@ -58,7 +58,7 @@ class PublishCommand(BaseCommand):
                     continue
 
             for renamed in renamed_docs:
-                os.remove(PaperDoc.get_doc_sync_path(renamed))
+                os.remove(renamed)
 
         else:
             try:
