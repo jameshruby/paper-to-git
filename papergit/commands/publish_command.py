@@ -26,16 +26,41 @@ class PublishCommand(BaseCommand):
             '--push', action='store_true', default=False,
             help="Push changes to the remote origin after commit.")
 
-    def process(self, args):
-        try:
-            doc = PaperDoc.get(PaperDoc.id == args.id)
-        except PaperDoc.DoesNotExist:
-            print("Invalid Doc, please check again!")
-            return
+        command_parser.add_argument(
+            '--sync', action='store_true', default=False,
+            help="Perform complete synchronization")
 
-        try:
-            doc.publish(push=args.push)
-        except NoDestinationError:
-            print("This Document hasn't been setup with a git repo...")
-            print("Please first add to a repo.")
-            return
+    def process(self, args):
+        if args.sync:
+            print("DO SYNC")
+            for doc in PaperDoc.select():
+                doc.get_changes()
+
+            print("Pulling the list of paper docs...")
+            PaperDoc.sync_docs()
+            for doc in PaperDoc.select():
+                print(doc)
+                try:
+                    doc = PaperDoc.get(PaperDoc.id == args.id)
+                except PaperDoc.DoesNotExist:
+                    print("Invalid Doc, please check again!")
+                    return
+                try:
+                    doc.publish(push=args.push)
+                except NoDestinationError:
+                    print("This Document hasn't been setup with a git repo...")
+                    print("Please first add to a repo.")
+                    return
+        else:
+            try:
+                doc = PaperDoc.get(PaperDoc.id == args.id)
+            except PaperDoc.DoesNotExist:
+                print("Invalid Doc, please check again!")
+                return
+
+            try:
+                doc.publish(push=args.push)
+            except NoDestinationError:
+                print("This Document hasn't been setup with a git repo...")
+                print("Please first add to a repo.")
+                return
