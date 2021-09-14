@@ -56,7 +56,7 @@ class PublishCommand(BaseCommand):
                     print("Please first add to a repo.")
                     continue
 
-            PaperDoc.removeRenamed(renamed_docs)
+            doc.removeRenamed(renamed_docs)
 
         else:
             try:
