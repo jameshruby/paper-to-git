@@ -268,6 +268,8 @@ class Sync(BasePaperModel):
         final_path = self.get_final_path(doc.title)
         return (original_path, final_path)
 
+    @classmethod
+    @dropbox_api
     def get_final_path(self, title):
         file_name = create_file_name(title)
         final_path = os.path.join(self.repo, self.path_in_repo, file_name)
