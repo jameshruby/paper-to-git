@@ -1,6 +1,7 @@
 """
 Publish a document.
 """
+import os
 from pprint import pprint
 
 from papergit.commands.base import BaseCommand
@@ -56,7 +57,8 @@ class PublishCommand(BaseCommand):
                     print("Please first add to a repo.")
                     continue
 
-            doc.removeRenamed(renamed_docs)
+            for renamed in renamed_docs:
+                os.remove(PaperDoc.get_doc_sync_path(renamed))
 
         else:
             try:

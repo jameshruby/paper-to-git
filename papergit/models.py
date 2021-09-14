@@ -12,15 +12,14 @@ from papergit.utilities.dropbox import dropbox_api
 from papergit.utilities.modules import create_file_name
 from papergit.utilities.general import generate_metadata
 from papergit.config import config
-from peewee import ( Model, CharField, ForeignKeyField, IntegerField,
-                     TimestampField, PrimaryKeyField)
-
+from peewee import (Model, CharField, ForeignKeyField, IntegerField,
+                    TimestampField, PrimaryKeyField)
 
 __all__ = [
     'PaperDoc',
     'PaperFolder',
     'Sync',
-    ]
+]
 
 
 class BasePaperModel(Model):
@@ -28,6 +27,7 @@ class BasePaperModel(Model):
     be it folder or document subclass this. It provides some very basic
     functionalities.
     """
+
     class Meta:
         database = config.db.db
 
@@ -257,11 +257,6 @@ class Sync(BasePaperModel):
 
         if commit:
             self.commit_changes(push=push)
-
-    def removeRenamed(self, renamed_docs):
-       for renamed in renamed_docs:
-            os.remove(PaperDoc.get_doc_sync_path(renamed))
-
 
     def try_sync_single(self, doc, commit=True, push=False):
         from os.path import exists
