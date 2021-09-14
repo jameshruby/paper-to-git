@@ -38,10 +38,10 @@ class PublishCommand(BaseCommand):
 
             print("Pulling the list of paper docs...")
             PaperDoc.sync_docs()
-            for doc in PaperDoc.select():
-                print(doc)
+            for doci in PaperDoc.select():
+                print(doci)
                 try:
-                    doc = PaperDoc.get(PaperDoc.id == args.id)
+                    doc = PaperDoc.get(PaperDoc.id == doci)
                 except PaperDoc.DoesNotExist:
                     print("Invalid Doc, please check again!")
                     return
