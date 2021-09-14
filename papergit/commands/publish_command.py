@@ -45,9 +45,6 @@ class PublishCommand(BaseCommand):
             print("Pulling the list of paper docs...")
             PaperDoc.sync_docs()
             for doci in PaperDoc.select():
-
-
-                print(doci)
                 try:
                     doc = PaperDoc.get(PaperDoc.id == doci)
                 except PaperDoc.DoesNotExist:
