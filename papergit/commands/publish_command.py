@@ -33,8 +33,12 @@ class PublishCommand(BaseCommand):
     def process(self, args):
         if args.sync:
             print("DO SYNC")
+            renamed_docs = []
             for doc in PaperDoc.select():
-                doc.get_changes()
+                og_title = doc.title
+                renamed = doc.get_changes()
+                if renamed:
+                    renamed_docs.append(og_title)
 
             print("Pulling the list of paper docs...")
             PaperDoc.sync_docs()
@@ -44,13 +48,16 @@ class PublishCommand(BaseCommand):
                     doc = PaperDoc.get(PaperDoc.id == doci)
                 except PaperDoc.DoesNotExist:
                     print("Invalid Doc, please check again!")
-                    return
+                    continue
                 try:
                     doc.publish(push=args.push)
                 except NoDestinationError:
                     print("This Document hasn't been setup with a git repo...")
                     print("Please first add to a repo.")
-                    return
+                    continue
+
+            PaperDoc.removeRenamed(renamed_docs)
+
         else:
             try:
                 doc = PaperDoc.get(PaperDoc.id == args.id)

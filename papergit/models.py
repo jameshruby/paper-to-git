@@ -65,6 +65,7 @@ class PaperDoc(BasePaperModel):
         """Update this record with the latest version of the document. Also,
         download the latest version to the file.
         """
+        renamed = False
         title, rev, is_draft = PaperDoc.download_doc_unless_draft(self.paper_id, "")
         if not is_draft and rev > self.version:
             print('Update revision for doc {0} from {1} to {2}'.format(
@@ -72,10 +73,12 @@ class PaperDoc(BasePaperModel):
             self.version = rev
             self.last_updated = time.time()
         if self.title != title:
+            renamed = True
             self.title = title
             self.last_updated = time.time()
         self.save()
         self.update_folder_info()
+        return renamed
 
     @classmethod
     def generate_file_path(self, doc_id):
@@ -255,6 +258,11 @@ class Sync(BasePaperModel):
         if commit:
             self.commit_changes(push=push)
 
+    def removeRenamed(self, renamed_docs):
+       for renamed in renamed_docs:
+            os.remove(PaperDoc.get_doc_sync_path(renamed))
+
+
     def try_sync_single(self, doc, commit=True, push=False):
         from os.path import exists
         if exists(PaperDoc.generate_file_path(doc.paper_id)):
@@ -262,9 +270,13 @@ class Sync(BasePaperModel):
 
     def get_doc_sync_path(self, doc):
         original_path = PaperDoc.generate_file_path(doc.paper_id)
-        file_name = create_file_name(doc.title)
-        final_path = os.path.join(self.repo, self.path_in_repo, file_name)
+        final_path = self.get_final_path(doc.title)
         return (original_path, final_path)
+
+    def get_final_path(self, title):
+        file_name = create_file_name(title)
+        final_path = os.path.join(self.repo, self.path_in_repo, file_name)
+        return final_path
 
     def commit_changes(self, push=False):
         git_repo = Repo(self.repo)
