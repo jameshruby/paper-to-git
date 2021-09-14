@@ -123,6 +123,13 @@ class PaperDoc(BasePaperModel):
         return (result.title, result.revision)
 
     @classmethod
+    def get_final_path(self, title):
+        """Downloads the given doc_id to the local file cache.
+        """
+        sync = Sync.get(folder=self.folder)
+        return sync.get_final_path(title)
+
+    @classmethod
     @dropbox_api
     def download_doc_unless_draft(self, dbx, doc_id, draft_tag="#draft"):
         """Downloads the given doc_id to the local file cache.
