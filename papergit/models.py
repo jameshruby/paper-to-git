@@ -128,8 +128,7 @@ class PaperDoc(BasePaperModel):
         try:
             sync = Sync.get(folder=self.folder)
             print("og title: %s" % title)
-            t = sync.get_final_path(title)
-            return t
+            return sync.get_final_path(title)
         except Sync.DoesNotExist:
             print("SYNC NOT EXIST")
             return ""
