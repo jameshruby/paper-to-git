@@ -126,8 +126,15 @@ class PaperDoc(BasePaperModel):
     def get_final_path(self, title):
         """Downloads the given doc_id to the local file cache.
         """
-        sync = Sync.get(folder=self.folder)
-        return sync.get_final_path(title)
+        try:
+            sync = Sync.get(folder=self.folder)
+            return sync.get_final_path(title)
+        except Sync.DoesNotExist:
+            print("SYNC NOT EXIST")
+            return None
+        except DocDoesNotExist:
+            print("DOC NOT EXIST")
+            return None
 
     @classmethod
     @dropbox_api
@@ -278,8 +285,8 @@ class Sync(BasePaperModel):
 
     def get_final_path(self, title):
         file_name = create_file_name(title)
-        final_path = os.path.join(self.repo, self.path_in_repo, file_name)
-        return final_path
+        # final_path = os.path.join(self.repo, self.path_in_repo, file_name)
+        return file_name
 
     def commit_changes(self, push=False):
         git_repo = Repo(self.repo)
