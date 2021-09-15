@@ -129,7 +129,7 @@ class PaperDoc(BasePaperModel):
             sync = Sync.get(folder=self.folder)
             print("og title: %s" % title)
             t = sync.get_final_path(title)
-            return "lalal"
+            return t
         except Sync.DoesNotExist:
             print("SYNC NOT EXIST")
             return ""
@@ -286,9 +286,9 @@ class Sync(BasePaperModel):
 
     def get_final_path(self, title):
         print("get_final_path")
-        # file_name = create_file_name(title)
+        file_name = create_file_name(title)
         # final_path = os.path.join(self.repo, self.path_in_repo, file_name)
-        return title
+        return file_name
 
     def commit_changes(self, push=False):
         git_repo = Repo(self.repo)
