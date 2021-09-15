@@ -36,9 +36,10 @@ class PublishCommand(BaseCommand):
             print("DO SYNC")
             renamed_docs = []
             for doc in PaperDoc.select():
+                og_title = doc.title
                 renamed = doc.get_changes()
                 if renamed:
-                    final_path = doc.get_final_path(doc.title)
+                    final_path = doc.get_final_path(og_title)
                     if final_path:
                         renamed_docs.append(final_path)
 
@@ -59,7 +60,7 @@ class PublishCommand(BaseCommand):
 
             for renamed in renamed_docs:
                 print("renamed %s" % renamed_docs)
-                #os.remove(renamed)
+                os.remove(renamed)
 
         else:
             try:
