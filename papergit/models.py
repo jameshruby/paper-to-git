@@ -122,7 +122,6 @@ class PaperDoc(BasePaperModel):
             path, doc_id, ExportFormat.markdown)
         return (result.title, result.revision)
 
-    @classmethod
     def get_final_path(self, title):
         """Downloads the given doc_id to the local file cache.
         """
