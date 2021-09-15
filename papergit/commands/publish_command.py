@@ -58,7 +58,8 @@ class PublishCommand(BaseCommand):
                     continue
 
             for renamed in renamed_docs:
-                os.remove(renamed)
+                print("renamed %s" % renamed_docs)
+                #os.remove(renamed)
 
         else:
             try:

@@ -184,7 +184,6 @@ class PaperDoc(BasePaperModel):
           (Later it will fail and allow to view a diff of the changes that will
            be made to the destination file.)
         """
-        print(self.title)
         is_draft = "#draft"
         if is_draft in self.title.lower():
             return True
