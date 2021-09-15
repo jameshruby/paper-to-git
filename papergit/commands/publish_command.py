@@ -41,8 +41,8 @@ class PublishCommand(BaseCommand):
                 print(renamed)
                 if renamed:
                     print("og title: %s" % og_title)
-                    print(PaperDoc.get_final_path(og_title))
-                    renamed_docs.append(PaperDoc.get_final_path(og_title))
+                    print(doc.get_final_path(og_title))
+                    # renamed_docs.append(PaperDoc.get_final_path(og_title))
 
             print("Pulling the list of paper docs...")
             PaperDoc.sync_docs()
