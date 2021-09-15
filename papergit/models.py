@@ -122,18 +122,15 @@ class PaperDoc(BasePaperModel):
             path, doc_id, ExportFormat.markdown)
         return (result.title, result.revision)
 
-    def get_final_path_sync(self, title):
+    def get_final_path(self, title):
         """Downloads the given doc_id to the local file cache.
         """
         try:
             sync = Sync.get(folder=self.folder)
-            print("og title: %s" % title)
             return (sync.get_final_path(title))
         except Sync.DoesNotExist:
-            print("SYNC NOT EXIST")
             return ""
         except DocDoesNotExist:
-            print("DOC NOT EXIST")
             return ""
 
     @classmethod
@@ -284,7 +281,6 @@ class Sync(BasePaperModel):
         return (original_path, final_path)
 
     def get_final_path(self, title):
-        print("get_final_path")
         file_name = create_file_name(title)
         final_path = os.path.join(self.repo, self.path_in_repo, file_name)
         return final_path
