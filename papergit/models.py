@@ -82,6 +82,15 @@ class PaperDoc(BasePaperModel):
         self.update_folder_info()
         return renamed
 
+
+    @classmethod
+    def fake_doc_cache(self):
+        if not os.path.exists(self.generate_file_path(self.paper_id)):
+            print("faking cache %s " % self.paper_id)
+            path = self.generate_file_path(self.paper_id)
+            print("faking cache path %s" % path)
+            open(path, "a")
+
     @classmethod
     def generate_file_path(self, doc_id):
         return os.path.join(config.CACHE_DIR, doc_id + '.md')
