@@ -131,10 +131,10 @@ class PaperDoc(BasePaperModel):
             # return sync.get_final_path(self, title)
         except Sync.DoesNotExist:
             print("SYNC NOT EXIST")
-            return None
+            return ""
         except DocDoesNotExist:
             print("DOC NOT EXIST")
-            return None
+            return ""
 
     @classmethod
     @dropbox_api
@@ -283,7 +283,7 @@ class Sync(BasePaperModel):
         final_path = os.path.join(self.repo, self.path_in_repo, file_name)
         return (original_path, final_path)
 
-    def get_final_path(self, title):
+    def get_final_pathA(self, title):
         file_name = create_file_name(title)
         # final_path = os.path.join(self.repo, self.path_in_repo, file_name)
         return file_name
