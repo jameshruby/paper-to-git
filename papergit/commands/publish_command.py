@@ -36,15 +36,12 @@ class PublishCommand(BaseCommand):
             print("DO SYNC")
             renamed_docs = []
             for doc in PaperDoc.select():
-                og_title = doc.title
                 renamed = doc.get_changes()
-                print(renamed)
                 if renamed:
-                    final_path = doc.get_final_path(og_title)
+                    final_path = doc.get_final_path(doc.title)
                     if final_path:
                         renamed_docs.append(final_path)
 
-            print("new th %s" % renamed_docs)
             print("Pulling the list of paper docs...")
             PaperDoc.sync_docs()
             for doci in PaperDoc.select():
@@ -60,8 +57,8 @@ class PublishCommand(BaseCommand):
                     print("Please first add to a repo.")
                     continue
 
-            # for renamed in renamed_docs:
-            #     os.remove(renamed)
+            for renamed in renamed_docs:
+                os.remove(renamed)
 
         else:
             try:
