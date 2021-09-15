@@ -33,7 +33,7 @@ class PublishCommand(BaseCommand):
 
     def process(self, args):
         if args.sync:
-            print("DO SYNC")
+            print("Pulling existing docs...")
             renamed_docs = []
             for doc in PaperDoc.select():
                 doc.fake_doc_cache()
