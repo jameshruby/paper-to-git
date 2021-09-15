@@ -40,7 +40,7 @@ class PublishCommand(BaseCommand):
                 renamed = doc.get_changes()
                 print(renamed)
                 if renamed:
-                    final_path = doc.get_final_path(og_title)
+                    final_path = doc.get_final_path_sync(og_title)
                     if final_path:
                         renamed_docs.append(final_path)
 
