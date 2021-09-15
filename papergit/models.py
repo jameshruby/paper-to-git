@@ -287,8 +287,8 @@ class Sync(BasePaperModel):
     def get_final_path(self, title):
         print("get_final_path")
         file_name = create_file_name(title)
-        # final_path = os.path.join(self.repo, self.path_in_repo, file_name)
-        return file_name
+        final_path = os.path.join(self.repo, self.path_in_repo, file_name)
+        return final_path
 
     def commit_changes(self, push=False):
         git_repo = Repo(self.repo)
