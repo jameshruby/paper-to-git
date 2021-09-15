@@ -40,7 +40,7 @@ class PublishCommand(BaseCommand):
                 renamed = doc.get_changes()
                 print(renamed)
                 if renamed:
-                    t = doc.get_final_path(og_title)
+                    t = doc.get_final_path_sync(og_title)
                     print("new th %s" % t)
                     # renamed_docs.append(PaperDoc.get_final_path(og_title))
 
