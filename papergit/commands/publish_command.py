@@ -36,7 +36,7 @@ class PublishCommand(BaseCommand):
             print("DO SYNC")
             renamed_docs = []
             for doc in PaperDoc.select():
-                doc.fake_doc_cache()
+                doc.fake_doc_cache(doc.id)
                 og_title = doc.title
                 renamed = doc.get_changes()
                 if renamed:
