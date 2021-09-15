@@ -85,7 +85,7 @@ class PaperDoc(BasePaperModel):
 
     @classmethod
     def fake_doc_cache(self, docid):
-        print("fake AAA %s %s" % self.paper_id, docid)
+        print("fake AAA %s %s" % (self.paper_id, docid))
         if not os.path.exists(self.generate_file_path(self.paper_id)):
             print("faking cache %s " % self.paper_id)
             path = self.generate_file_path(self.paper_id)
