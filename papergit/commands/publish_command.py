@@ -36,7 +36,8 @@ class PublishCommand(BaseCommand):
             print("DO SYNC")
             renamed_docs = []
             for doc in PaperDoc.select():
-                og_title = doc.title
+                # og_title = doc.title
+                doc.get_changes()
                 # renamed = doc.get_changes()
                 # if renamed:
                 #     print("og title: %s" % og_title)
@@ -58,8 +59,8 @@ class PublishCommand(BaseCommand):
                     print("Please first add to a repo.")
                     continue
 
-            for renamed in renamed_docs:
-                os.remove(renamed)
+            # for renamed in renamed_docs:
+            #     os.remove(renamed)
 
         else:
             try:
