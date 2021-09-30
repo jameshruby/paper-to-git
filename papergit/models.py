@@ -174,8 +174,9 @@ class PaperDoc(BasePaperModel):
     def doc_subfolders(self, dbx):
         folders = []
         folder_info = dbx.paper_docs_get_folder_info(self.paper_id)
-        for folder in (folder_info[1:]):
-            folders.append(folder.name)
+        if folder_info and folder_info.folders:
+            for folder in folder_info[1:]:
+                folders.append(folder.name)
         self.subfolders = folders
 
     @dropbox_api
