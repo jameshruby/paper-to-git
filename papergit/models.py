@@ -175,9 +175,9 @@ class PaperDoc(BasePaperModel):
         folders = []
         folder_info = dbx.paper_docs_get_folder_info(self.paper_id)
         if folder_info and folder_info.folders:
-            for folder in folder_info[1:]:
+            for folder in folder_info.folders[1:]:
                 folders.append(folder.name)
-            # self.subfolders = folders
+            self.subfolders = folders
 
     @dropbox_api
     def update_folder_info(self, dbx):
