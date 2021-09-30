@@ -24,7 +24,7 @@ date: "$date"
 draft: "$draft"
 
 kategorie: "$categories"
-tagy: $tags
+štítky: $tags
 categories: "$categories"
 tags: $tags
 ---""")
