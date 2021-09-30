@@ -177,7 +177,7 @@ class PaperDoc(BasePaperModel):
         if folder_info and folder_info.folders:
             for folder in folder_info[1:]:
                 folders.append(folder.name)
-            self.subfolders = folders
+            # self.subfolders = folders
 
     @dropbox_api
     def update_folder_info(self, dbx):
