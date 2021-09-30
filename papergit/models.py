@@ -41,7 +41,7 @@ class PaperFolder(BasePaperModel):
         return "Folder {}".format(self.name)
 
 
-class PaperDoc( ):
+class PaperDoc(BasePaperModel):
     """Representation of a Dropbox Paper document."""
     title = CharField()
     paper_id = CharField()
@@ -76,7 +76,7 @@ class PaperDoc( ):
             self.last_updated = time.time()
         if self.title != title:
             renamed = True
-            self.title  = title
+            self.title = title
             self.last_updated = time.time()
         self.save()
         self.update_folder_info()
