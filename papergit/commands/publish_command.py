@@ -53,6 +53,7 @@ class PublishCommand(BaseCommand):
                     print("Invalid Doc, please check again!")
                     continue
                 try:
+                    doc.get_subfolders()
                     doc.publish(push=args.push)
                 except NoDestinationError:
                     print("This Document hasn't been setup with a git repo...")

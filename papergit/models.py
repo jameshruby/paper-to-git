@@ -41,7 +41,7 @@ class PaperFolder(BasePaperModel):
         return "Folder {}".format(self.name)
 
 
-class PaperDoc(BasePaperModel):
+class PaperDoc( ):
     """Representation of a Dropbox Paper document."""
     title = CharField()
     paper_id = CharField()
@@ -76,7 +76,7 @@ class PaperDoc(BasePaperModel):
             self.last_updated = time.time()
         if self.title != title:
             renamed = True
-            self.title = title
+            self.title  = title
             self.last_updated = time.time()
         self.save()
         self.update_folder_info()
@@ -168,6 +168,14 @@ class PaperDoc(BasePaperModel):
                 if folder.name.lower() == folder_info.folders[0].name.lower():
                     return True
         return False
+
+    @dropbox_api
+    def get_subfolders(self, dbx):
+        print(self.paper_id)
+        print(self.paper_id)
+        folder_info = dbx.paper_docs_get_folder_info(self.paper_id)
+        print(self.paper_id)
+        return folder_info.folders
 
     @dropbox_api
     def update_folder_info(self, dbx):
