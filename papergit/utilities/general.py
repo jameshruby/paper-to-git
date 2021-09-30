@@ -59,7 +59,7 @@ def generate_hugo_metadata(doc, tags, draft):
     """
     return METADATA_TEMPLATE_HUGO.safe_substitute(title=doc.title,
                                                   date=doc.last_updated,
-                                                  categories=doc.folder,
+                                                  categories=doc.subfolders,
                                                   tags=tags,
                                                   draft=draft,
                                                   )

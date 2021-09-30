@@ -49,6 +49,7 @@ class PaperDoc(BasePaperModel):
     folder = ForeignKeyField(PaperFolder, null=True, related_name='docs')
     last_updated = TimestampField()
     last_published = TimestampField(null=True)
+    subfolders = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -170,12 +171,12 @@ class PaperDoc(BasePaperModel):
         return False
 
     @dropbox_api
-    def get_subfolders(self, dbx):
-        print(self.paper_id)
+    def doc_subfolders(self, dbx):
+        print("get_sub")
         print(self.paper_id)
         folder_info = dbx.paper_docs_get_folder_info(self.paper_id)
-        print(self.paper_id)
-        return folder_info.folders
+        print(self.subfolders)
+        self.subfolders = folder_info.folders
 
     @dropbox_api
     def update_folder_info(self, dbx):
