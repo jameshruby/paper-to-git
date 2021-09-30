@@ -21,11 +21,11 @@ METADATA_TEMPLATE_HUGO = Template("""\
 ---
 title: "$title"
 date: "$date"
-draft: "$draft"
+draft: $draft
 
-kategorie: "$categories"
+kategorie: $categories
 štítky: $tags
-categories: "$categories"
+categories: $categories
 tags: $tags
 ---""")
 
