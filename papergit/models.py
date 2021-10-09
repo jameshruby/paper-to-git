@@ -66,22 +66,29 @@ class PaperDoc(BasePaperModel):
         """Update this record with the latest version of the document. Also,
         download the latest version to the file.
         """
+        print("get Changes")
         renamed = False
+        changed = False
         title, rev, is_draft = PaperDoc.download_doc_unless_draft(self.paper_id)
         if is_draft:
-            return renamed
+            return renamed, changed
         if not is_draft and rev > self.version:
             print('Update revision for doc {0} from {1} to {2}'.format(
                 self.title, self.version, rev))
             self.version = rev
             self.last_updated = time.time()
+            changed = True
         if self.title != title:
+            print("title")
             renamed = True
             self.title = title
             self.last_updated = time.time()
-        self.save()
-        self.update_folder_info()
-        return renamed
+            changed = True
+        if changed:
+            print("changed")
+            self.save()
+            self.update_folder_info()
+        return renamed, changed
 
     def fake_doc_cache(self):
         if not os.path.exists(self.generate_file_path(self.paper_id)):
@@ -206,18 +213,24 @@ class PaperDoc(BasePaperModel):
         # if is_draft in self.title.lower():
         #     return True
         if self.folder:
+            synced = False
             try:
                 sync = Sync.get(folder=self.folder)
-                sync.try_sync_single(doc=self, commit=False, push=push)
-                self.last_published = time.time()
-                self.save()
+                synced = sync.try_sync_single(doc=self, commit=False, push=push)
             except Sync.DoesNotExist:
                 raise NoDestinationError
             except DocDoesNotExist:
+                print("sfdfddf")
                 self.download_doc()
                 self.publish(push=push)
-            return True
+                return False
+            print("folderexists")
+            return synced
         raise NoDestinationError
+
+    def set_folder_date(self):
+        self.last_published = time.time()
+        self.save()
 
     @property
     def sync_path(self):
@@ -256,7 +269,7 @@ class Sync(BasePaperModel):
         return "Folder {} to Git repo at {} at path {}".format(
             self.folder.name, self.repo, self.path_in_repo)
 
-    def sync(self, commit=True, push=False):
+    def sync(self, commit=False, push=False):
         for doc in self.folder.docs:
             self.sync_single(doc, commit=False, push=False)
         if commit:
@@ -266,6 +279,8 @@ class Sync(BasePaperModel):
         original_path, final_path = self.get_doc_sync_path(doc)
         with open(final_path, 'w+') as fp:
             with open(original_path, 'r') as op:
+                print('opening')
+                print(original_path)
                 heading = op.readline().strip()
                 first_line = op.readline().strip()
 
@@ -290,6 +305,8 @@ class Sync(BasePaperModel):
         from os.path import exists
         if exists(PaperDoc.generate_file_path(doc.paper_id)):
             self.sync_single(doc, commit, push)
+            return True
+        return False
 
     def get_doc_sync_path(self, doc):
         original_path = PaperDoc.generate_file_path(doc.paper_id)

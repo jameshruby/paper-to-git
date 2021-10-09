@@ -35,14 +35,26 @@ class PublishCommand(BaseCommand):
         if args.sync:
             print("Pulling existing docs...")
             renamed_docs = []
+            existing = []
             for doc in PaperDoc.select():
+                existing.append(doc.paper_id)
                 doc.fake_doc_cache()
                 og_title = doc.title
-                renamed = doc.get_changes()
+                renamed, changed = doc.get_changes()
                 if renamed:
                     final_path = doc.get_final_path(og_title)
                     if final_path:
                         renamed_docs.append(final_path)
+                try:
+                    if changed:
+                        doc.doc_subfolders()
+                        synced = doc.publish(push=args.push)
+                        if synced:
+                            doc.set_folder_date()
+                except NoDestinationError:
+                    print("This Document hasn't been setup with a git repo...")
+                    print("Please first add to a repo.")
+                    continue
 
             print("Pulling the list of paper docs...")
             PaperDoc.sync_docs()
@@ -53,8 +65,16 @@ class PublishCommand(BaseCommand):
                     print("Invalid Doc, please check again!")
                     continue
                 try:
+                    if PaperDoc.paper_id in existing:
+                        print("Skipping doc")
+                        continue
+
+                    print("Continue doc")
                     doc.doc_subfolders()
-                    doc.publish(push=args.push)
+                    synced = doc.publish(push=args.push)
+                    if synced:
+                        doc.set_folder_date()
+
                 except NoDestinationError:
                     print("This Document hasn't been setup with a git repo...")
                     print("Please first add to a repo.")
