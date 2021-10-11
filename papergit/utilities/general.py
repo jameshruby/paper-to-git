@@ -22,6 +22,7 @@ METADATA_TEMPLATE_HUGO = Template("""\
 title: "$title"
 date: "$date"
 draft: $draft
+weight: $weight
 
 kategorie: $categories
 štítky: $tags
@@ -57,9 +58,15 @@ def generate_hugo_metadata(doc, tags, draft):
     Generate the YAML metadata to add on top of a PaperDoc when moving a
     PaperDoc to a static site generator.
     """
+    weight = 0
+    for tag in tags:
+        if tag == 'important':
+            weight = 100
+
     return METADATA_TEMPLATE_HUGO.safe_substitute(title=doc.title,
                                                   date=doc.last_updated,
                                                   categories=doc.subfolders,
                                                   tags=tags,
                                                   draft=draft,
+                                                  weight=weight,
                                                   )

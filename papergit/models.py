@@ -66,7 +66,6 @@ class PaperDoc(BasePaperModel):
         """Update this record with the latest version of the document. Also,
         download the latest version to the file.
         """
-        print("get Changes")
         renamed = False
         changed = False
         title, rev, is_draft = PaperDoc.download_doc_unless_draft(self.paper_id)
@@ -79,13 +78,11 @@ class PaperDoc(BasePaperModel):
             self.last_updated = time.time()
             changed = True
         if self.title != title:
-            print("title")
             renamed = True
             self.title = title
             self.last_updated = time.time()
             changed = True
         if changed:
-            print("changed")
             self.save()
             self.update_folder_info()
         return renamed, changed
@@ -220,11 +217,9 @@ class PaperDoc(BasePaperModel):
             except Sync.DoesNotExist:
                 raise NoDestinationError
             except DocDoesNotExist:
-                print("sfdfddf")
                 self.download_doc()
                 self.publish(push=push)
                 return False
-            print("folderexists")
             return synced
         raise NoDestinationError
 
@@ -279,8 +274,6 @@ class Sync(BasePaperModel):
         original_path, final_path = self.get_doc_sync_path(doc)
         with open(final_path, 'w+') as fp:
             with open(original_path, 'r') as op:
-                print('opening')
-                print(original_path)
                 heading = op.readline().strip()
                 first_line = op.readline().strip()
 

@@ -66,10 +66,10 @@ class PublishCommand(BaseCommand):
                     continue
                 try:
                     if PaperDoc.paper_id in existing:
-                        print("Skipping doc")
+                        # print("Skipping doc")
                         continue
 
-                    print("Continue doc")
+                    # print("Continue doc")
                     doc.doc_subfolders()
                     synced = doc.publish(push=args.push)
                     if synced:
@@ -81,7 +81,7 @@ class PublishCommand(BaseCommand):
                     continue
 
             for renamed in renamed_docs:
-                print("renamed %s" % renamed_docs)
+                # print("renamed %s" % renamed_docs)
                 os.remove(renamed)
 
         else:
