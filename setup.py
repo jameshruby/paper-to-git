@@ -41,10 +41,8 @@ setup(
 
     ],
     install_requires=[
-        'ipython',
         'dropbox',
         'flufl.lock',
-        'flask',
         'markdown',
         'lazr.config',
         'peewee',
