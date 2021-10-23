@@ -71,7 +71,7 @@ class PaperDoc(BasePaperModel):
         title, rev, is_draft = PaperDoc.download_doc_unless_draft(self.paper_id)
         if is_draft:
             return renamed, changed
-        if not is_draft and rev > self.version:
+        if rev > self.version:
             print('Update revision for doc {0} from {1} to {2}'.format(
                 self.title, self.version, rev))
             self.version = rev
