@@ -217,6 +217,7 @@ class PaperDoc(BasePaperModel):
             except Sync.DoesNotExist:
                 raise NoDestinationError
             except DocDoesNotExist:
+                print("publish doc doesn't exist %s %s" % (self.title, self.paper_id))
                 self.download_doc()
                 self.publish(push=push)
                 return False

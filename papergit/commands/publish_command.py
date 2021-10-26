@@ -65,13 +65,12 @@ class PublishCommand(BaseCommand):
                     print("Invalid Doc, please check again!")
                     continue
                 try:
-                    if PaperDoc.paper_id in existing:
-                        # print("Skipping doc")
+                    if doc.paper_id in existing:
                         continue
 
-                    # print("Continue doc")
+                    print("NEW doc %s" % doc.title)
                     doc.doc_subfolders()
-                    synced = doc.publish(push=args.push)
+                    synced=doc.publish(push=args.push)
                     if synced:
                         doc.set_folder_date()
 
